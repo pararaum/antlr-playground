@@ -20,6 +20,10 @@ class MyParserErrorListener: public antlr4::BaseErrorListener {
 };
 
 int main(int argc, char *argv[]) {
+  if(argc != 2) {
+    std::cerr << "Usage: parser '<EXPRESSION>'\n";
+    return 1;
+  }
   antlr4::ANTLRInputStream input(argv[1]);
   ExprLexer lexer(&input);
   antlr4::CommonTokenStream tokens(&lexer);
@@ -28,9 +32,9 @@ int main(int argc, char *argv[]) {
 
   tokens.fill();
   // Only if you want to list the tokens
-  // for (auto token : tokens.getTokens()) {
-  //  std::cout << token->toString() << std::endl;
-  // }
+  for (auto token : tokens.getTokens()) {
+    std::cout << '"' << token->toString() << '"' << std::endl;
+  }
   
   ExprParser parser(&tokens);
   parser.removeErrorListeners();
