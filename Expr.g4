@@ -1,3 +1,5 @@
+// -*- mode: antlr -*-
+
 grammar Expr;
 
 main: expr EOF;
