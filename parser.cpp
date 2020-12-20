@@ -24,18 +24,30 @@ class MyParserErrorListener: public antlr4::BaseErrorListener {
 class MyExprListener : public ExprBaseListener {
 protected:
   unsigned int count;
+  unsigned int depth;
 
+  std::ostream &stream() {
+    for(unsigned i = 0; i < depth; ++i) {
+      std::cout << '.';
+    }
+    std::cout << ' ';
+    return std::cout;
+  }
 public:
-  MyExprListener() : count(0) {}
+  MyExprListener() : count(0), depth(0) {}
   virtual void enterExpr(ExprParser::ExprContext *ctx) {
     ++count;
-    std::cout << ctx << std::endl;
-    std::cout << '\t' << ctx->INT() << std::endl;
-    std::cout << '\t' << ctx->expr().size() << std::endl;
+    ++depth;
+    stream() << ctx << std::endl;
+    stream() << '\t' << ctx->INT() << std::endl;
+    stream() << '\t' << ctx->expr().size() << std::endl;
     if(ctx->INT() != NULL) {
       // This is a Token.
-      std::cout << '\t' << ctx->INT()->getText() << std::endl;
+      stream() << '\t' << ctx->INT()->getText() << std::endl;
     }
+  }
+  virtual void exitExpr(ExprParser::ExprContext * /*ctx*/) override {
+    --depth;
   }
   unsigned int get_count(void) const { return count; }
 };
