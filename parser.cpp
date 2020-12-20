@@ -4,6 +4,7 @@
 #include "antlr4-runtime.h"
 #include "ExprLexer.h"
 #include "ExprParser.h"
+#include "ExprBaseListener.h"
 
 class MyParserErrorListener: public antlr4::BaseErrorListener {
   virtual void syntaxError(
@@ -17,6 +18,26 @@ class MyParserErrorListener: public antlr4::BaseErrorListener {
     s << "Line(" << line << ":" << charPositionInLine << ") Error(" << msg << ")";
     throw std::invalid_argument(s.str());
   }
+};
+
+// https://github.com/antlr/antlr4/blob/master/doc/cpp-target.md
+class MyExprListener : public ExprBaseListener {
+protected:
+  unsigned int count;
+
+public:
+  MyExprListener() : count(0) {}
+  virtual void enterExpr(ExprParser::ExprContext *ctx) {
+    ++count;
+    std::cout << ctx << std::endl;
+    std::cout << '\t' << ctx->INT() << std::endl;
+    std::cout << '\t' << ctx->expr().size() << std::endl;
+    if(ctx->INT() != NULL) {
+      // This is a Token.
+      std::cout << '\t' << ctx->INT()->getText() << std::endl;
+    }
+  }
+  unsigned int get_count(void) const { return count; }
 };
 
 int main(int argc, char *argv[]) {
@@ -42,6 +63,9 @@ int main(int argc, char *argv[]) {
   try {
     antlr4::tree::ParseTree* tree = parser.main();
     std::cout << tree->toStringTree() << std::endl;
+    MyExprListener listener;
+    antlr4::tree::ParseTreeWalker::DEFAULT.walk(&listener, tree);
+    std::cout << "\tcount in listener = " << listener.get_count() << std::endl;
     return 0;
   } catch (std::invalid_argument &e) {
     std::cout << e.what() << std::endl;
