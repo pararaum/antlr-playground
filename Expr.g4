@@ -8,8 +8,9 @@ main: expr EOF;
 expr: expr OPmult expr
     | expr OPadd expr
     | INT
-    | '(' expr ')'
+    | '(' expr ')' { std::cout << "🖨 Found parenthesis '" << $expr.text << "'\n"; }
     ;
+// Rule Actions, see https://github.com/antlr/antlr4/blob/4.9/doc/actions.md.
 
 OPmult  : ('*'|'/')
     ;
