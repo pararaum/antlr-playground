@@ -36,16 +36,20 @@ protected:
 public:
   MyExprListener() : count(0), depth(0) {}
   virtual void enterExpr(ExprParser::ExprContext *ctx) {
+    auto fTN = [this](const char *name, antlr4::tree::TerminalNode *node) {
+		 stream() << name << ": " << node;
+		 if(node != NULL) {
+		   std::cout << '\t' << node->getText();
+		 }
+		 std::cout << std::endl;
+	       };
     ++count;
     ++depth;
     stream() << ctx << std::endl;
     // ###
-    stream() << "INT: " << ctx->INT();
-    if(ctx->INT() != NULL) {
-      // This is a Token.
-      std::cout << '\t' << ctx->INT()->getText();
-    }
-    std::cout << std::endl;
+    fTN("INT", ctx->INT());
+    fTN("OPmult", ctx->OPmult());
+    fTN("OPadd", ctx->OPadd());
     // ###
     stream() << "expr: " << ctx->expr().size() << '\t';
     for(auto i : ctx->expr()) {
