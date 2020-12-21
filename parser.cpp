@@ -39,12 +39,19 @@ public:
     ++count;
     ++depth;
     stream() << ctx << std::endl;
-    stream() << '\t' << ctx->INT() << std::endl;
-    stream() << '\t' << ctx->expr().size() << std::endl;
+    // ###
+    stream() << "INT: " << ctx->INT();
     if(ctx->INT() != NULL) {
       // This is a Token.
-      stream() << '\t' << ctx->INT()->getText() << std::endl;
+      std::cout << '\t' << ctx->INT()->getText();
     }
+    std::cout << std::endl;
+    // ###
+    stream() << "expr: " << ctx->expr().size() << '\t';
+    for(auto i : ctx->expr()) {
+      std::cout << ' ' << i;
+    }
+    std::cout << std::endl;
   }
   virtual void exitExpr(ExprParser::ExprContext * /*ctx*/) override {
     --depth;
@@ -77,7 +84,7 @@ int main(int argc, char *argv[]) {
     std::cout << tree->toStringTree() << std::endl;
     MyExprListener listener;
     antlr4::tree::ParseTreeWalker::DEFAULT.walk(&listener, tree);
-    std::cout << "\tcount in listener = " << listener.get_count() << std::endl;
+    std::cout << "🗠 count in listener = " << listener.get_count() << std::endl;
     return 0;
   } catch (std::invalid_argument &e) {
     std::cout << e.what() << std::endl;
