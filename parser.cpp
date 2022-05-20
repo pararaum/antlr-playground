@@ -6,6 +6,9 @@
 #include "ExprParser.h"
 #include "ExprBaseListener.h"
 
+using std::cout;
+using std::endl;
+
 class MyParserErrorListener: public antlr4::BaseErrorListener {
   virtual void syntaxError(
       antlr4::Recognizer *recognizer,
@@ -35,6 +38,10 @@ protected:
   }
 public:
   MyExprListener() : count(0), depth(0) {}
+  virtual void enterMain(ExprParser::MainContext *ctx) {
+    cout << "Entering `main`: " << ctx << endl;
+    cout << "\texpr: " << ctx->expr() << endl;
+  }
   virtual void enterExpr(ExprParser::ExprContext *ctx) {
     auto fTN = [this](const char *name, antlr4::tree::TerminalNode *node) {
 		 stream() << name << ": " << node;
